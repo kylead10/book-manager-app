@@ -1,5 +1,11 @@
+import Book from './components/Book';
+
 const App = () => {
-  return <div>App</div>;
+  return (
+    <>
+      <Book />
+    </>
+  );
 };
 
 export default App;
