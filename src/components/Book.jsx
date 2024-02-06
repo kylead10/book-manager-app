@@ -1,20 +1,20 @@
 import { Button, Card } from 'react-bootstrap';
 import { useHistory } from 'react-router-dom';
 
-const Book = ({
+const Book = ([
   id,
-  bookname,
+  bookName,
   author,
   price,
   quantity,
   date,
   handleRemoveBook,
-}) => {
+]) => {
   const history = useHistory();
   return (
     <Card style={{ width: '18rem' }} className='book'>
       <Card.Body>
-        <Card.Title className='book-title'>{bookname}</Card.Title>
+        <Card.Title className='book-title'>{bookName}</Card.Title>
         <div className='book-details'>
           <div>Author: {author}</div>
           <div>Quantity: {quantity} </div>
