@@ -1,85 +1,71 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Form, Button } from 'react-bootstrap';
 import { v4 as uuidv4 } from 'uuid';
 
-const BookForm = (props) => {
-  const [book, setBook] = useState(() => {
-    return {
-      bookname: props.book ? props.book.bookname : '',
-      author: props.book ? props.book.author : '',
-      quantity: props.book ? props.book.quantity : '',
-      price: props.book ? props.book.price : '',
-      date: props.book ? props.book.date : '',
-    };
-  });
-
-  const [errorMsg, setErrorMsg] = useState('');
-  const { bookname, author, price, quantity } = book;
-
-  const handleOnSubmit = (event) => {
-    event.preventDefault();
-    const values = [bookname, author, price, quantity];
-    let errorMsg = '';
-
-    const allFieldsFilled = values.every((field) => {
-      const value = `${field}`.trim();
-      return value !== '' && value !== '0';
-    });
-
-    if (allFieldsFilled) {
-      const book = {
-        id: uuidv4(),
-        bookname,
-        author,
-        price,
-        quantity,
-        date: new Date(),
-      };
-      props.handleOnSubmit(book);
-    } else {
-      errorMsg = 'Please fill out all the fields.';
+const BookForm = ({ book: initialBook, handleOnSubmit }) => {
+  // State to manage form data and error message
+  const [book, setBook] = useState(
+    initialBook || {
+      bookname: '',
+      author: '',
+      quantity: '',
+      price: '',
+      date: '',
     }
-    setErrorMsg(errorMsg);
+  );
+  const [errorMsg, setErrorMsg] = useState('');
+
+  // Handle form submission
+  const handleSubmit = (event) => {
+    event.preventDefault();
+
+    // Validate form fields
+    const { bookname, author, quantity, price } = book;
+    if (!bookname || !author || !quantity || !price) {
+      setErrorMsg('Please fill out all fields.');
+      return;
+    }
+
+    // Generate unique ID for the book
+    const id = uuidv4();
+
+    // Construct the book object
+    const newBook = {
+      id,
+      ...book,
+      date: new Date().toISOString(), // Use ISO string for date
+    };
+
+    // Submit the book object to the parent component
+    handleOnSubmit(newBook);
+
+    // Clear the form fields
+    setBook({
+      bookname: '',
+      author: '',
+      quantity: '',
+      price: '',
+      date: '',
+    });
+    setErrorMsg('');
   };
 
+  // Handle input changes
   const handleInputChange = (event) => {
     const { name, value } = event.target;
-    switch (name) {
-      case 'quantity':
-        if (value === '' || parseInt(value) === +value) {
-          setBook((prevState) => ({
-            ...prevState,
-            [name]: value,
-          }));
-        }
-        break;
-      case 'price':
-        if (value === '' || value.match(/^\d{1,}(\.\d{0,2})?$/)) {
-          setBook((prevState) => ({
-            ...prevState,
-            [name]: value,
-          }));
-        }
-        break;
-      default:
-        setBook((prevState) => ({
-          ...prevState,
-          [name]: value,
-        }));
-    }
+    setBook({ ...book, [name]: value });
   };
 
   return (
     <div className='main-form'>
       {errorMsg && <p className='errorMsg'>{errorMsg}</p>}
-      <Form onSubmit={handleOnSubmit}>
-        <Form.Group controlId='name'>
+      <Form onSubmit={handleSubmit}>
+        <Form.Group controlId='bookname'>
           <Form.Label>Book Name</Form.Label>
           <Form.Control
-            className='input-control'
             type='text'
             name='bookname'
-            value={bookname}
+            value={book.bookname}
             placeholder='Enter name of book'
             onChange={handleInputChange}
           />
@@ -87,10 +73,9 @@ const BookForm = (props) => {
         <Form.Group controlId='author'>
           <Form.Label>Book Author</Form.Label>
           <Form.Control
-            className='input-control'
             type='text'
             name='author'
-            value={author}
+            value={book.author}
             placeholder='Enter name of author'
             onChange={handleInputChange}
           />
@@ -98,10 +83,9 @@ const BookForm = (props) => {
         <Form.Group controlId='quantity'>
           <Form.Label>Quantity</Form.Label>
           <Form.Control
-            className='input-control'
             type='number'
             name='quantity'
-            value={quantity}
+            value={book.quantity}
             placeholder='Enter available quantity'
             onChange={handleInputChange}
           />
@@ -109,15 +93,14 @@ const BookForm = (props) => {
         <Form.Group controlId='price'>
           <Form.Label>Book Price</Form.Label>
           <Form.Control
-            className='input-control'
             type='text'
             name='price'
-            value={price}
+            value={book.price}
             placeholder='Enter price of book'
             onChange={handleInputChange}
           />
         </Form.Group>
-        <Button variant='primary' type='submit' className='submit-btn'>
+        <Button variant='primary' type='submit'>
           Submit
         </Button>
       </Form>
