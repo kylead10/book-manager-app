@@ -1,4 +1,3 @@
-import
 const BooksList = () => {
   return <div>BooksList</div>;
 };
