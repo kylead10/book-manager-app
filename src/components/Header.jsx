@@ -1,4 +1,3 @@
-import React
 const Header = () => {
   return <div>Header</div>;
 };
