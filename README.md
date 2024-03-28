@@ -1,3 +1,3 @@
 # React + Vite:
 
-This template provides a minimal setup to get React working in Vite (not don
+This template provides a minimal setup to get React working in Vite (not comple
